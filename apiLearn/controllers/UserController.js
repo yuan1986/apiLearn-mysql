@@ -1,5 +1,6 @@
 var dbConfig = require('../util/dbconfig');
 let fs = require('fs');
+let path = require('path');
 
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -428,14 +429,14 @@ let uploadMoreImg = (req, res) => {
     let sql = `insert into image (url,create_time,user_id) values `;
     let sqlArr = [];
     for (var i in req.files) {
-      res.set({
-        'content-type': 'application/json; charset=utf8',
-      });
+      // res.set({
+      //   'content-type': 'application/json; charset=utf8',
+      // });
       let file = req.files[i];
-      fs.renameSync(
-        './public/uploads/' + file.filename,
-        './public/uploads/' + file.originalname
-      );
+      // fs.renameSync(
+      //   './public/uploads/' + file.filename,
+      //   './public/uploads/' + file.originalname
+      // );
       let { user_id } = req.query;
       let url = 'http://localhost:3000/uploads/' + file.originalname;
       if (req.files.length - 1 == i) {
@@ -502,6 +503,12 @@ let publish = async (req, res) => {
   }
 };
 
+// 文件下载
+let download = (req, res) => {
+  const filePath = path.join(__dirname, '../public/uploads/4.PNG');
+  res.download(filePath);
+};
+
 module.exports = {
   sendCode,
   codePhoneLogin,
@@ -513,4 +520,5 @@ module.exports = {
   uploadImg,
   uploadMoreImg,
   publish,
+  download,
 };

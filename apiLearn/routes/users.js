@@ -23,7 +23,7 @@ var upload = multer({
 }).single('file');
 
 var moreUpload = multer({ storage, dest: './public/uploads/' }).array(
-  'file',
+  'files',
   100
 );
 
@@ -37,5 +37,6 @@ router.post('/logout', User.logout);
 router.post('/uploadImg', upload, User.uploadImg);
 router.post('/uploadMoreImg', moreUpload, User.uploadMoreImg);
 router.post('/publish', User.publish);
+router.get('/download', User.download);
 
 module.exports = router;
