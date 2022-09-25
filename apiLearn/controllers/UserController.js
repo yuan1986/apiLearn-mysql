@@ -1,17 +1,10 @@
 var dbConfig = require('../util/dbconfig');
 let fs = require('fs');
-//阿里大鱼
-// const Core = require('@alicloud/pop-core');
-const config = require('../util/aliconfig');
-//配置
-// let client = new Core(config.alicloud);
-let requestOption = {
-  method: 'POST',
-};
 
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
 //手机号码验证
 var validatePhoneCode = [];
 let sendCodeP = (phone) => {
@@ -22,6 +15,7 @@ let sendCodeP = (phone) => {
   }
   return false;
 };
+
 //验证
 let findCodeAndPhone = (phone, code) => {
   for (var item of validatePhoneCode) {
@@ -138,38 +132,6 @@ let setUserName = async (user_id, username) => {
     return false;
   }
 };
-
-// var sendCoreCode = (req,res)=>{
-//     let phone = req.query.phone;
-//     let code = rand(1000,9999);
-//     console.log(phone)
-//     var params = {
-//         "RegionId": "cn-hangzhou",
-//         "PhoneNumbers": phone,
-//         "SignName": "apiLearn",
-//         "TemplateCode": "SMS_190267455",
-//         "TemplateParam": JSON.stringify({"code":code})
-//       }
-//     client.request('SendSms',params,requestOption).then((result)=>{
-//         console.log(result);
-//         if(result.Code == 'OK'){
-//             res.send({
-//                 code:200,
-//                 msg:'发送成功'
-//             });
-//             validatePhoneCode.push({
-//                 'phone':phone,
-//                 'code':code
-//             })
-//             console.log(code);
-//         }else{
-//             res.send({
-//                 code:400,
-//                 msg:'发送失败'
-//             })
-//         }
-//     })
-// }
 
 //模拟验证码发送接口
 var sendCode = (req, res) => {
@@ -417,8 +379,9 @@ let logout = (req, res) => {
     msg: '退出登录',
   });
 };
+
 //图片上传
-let editUserImg = (req, res) => {
+let uploadImg = (req, res) => {
   if (req.file.length === 0) {
     res.render('error', { message: '上传文件不能为空！' });
   } else {
@@ -456,6 +419,7 @@ let editUserImg = (req, res) => {
     });
   }
 };
+
 //批量多图上传
 let uploadMoreImg = (req, res) => {
   if (req.files.length === 0) {
@@ -482,31 +446,28 @@ let uploadMoreImg = (req, res) => {
       sqlArr.push([url, new Date().valueOf(), user_id]);
     }
     //批量存储到数据库
-    console.log(sqlArr[0]);
-    dbConfig.sqlConnect(sql, [sqlArr[0]], (err, data) => {
-      if (err) {
-        console.log(err);
+    console.log('the sql params is : ', sqlArr);
+
+    dbConfig.sqlConnect(sql, sqlArr, (data) => {
+      console.log(data.affectedRows);
+      if (data.affectedRows > 0) {
+        res.send({
+          code: 200,
+          affectedRows: data.affectedRows,
+          msg: '上传成功',
+        });
       } else {
-        console.log(data.affectedRows);
-        if (data.affectedRows > 0) {
-          res.send({
-            code: 200,
-            affectedRows: data.affectedRows,
-            msg: '上传成功',
-          });
-        } else {
-          res.send({
-            code: 400,
-            msg: '上传失败',
-          });
-        }
+        res.send({
+          code: 400,
+          msg: '上传失败',
+        });
       }
     });
   }
 };
 
 //发布视频
-let publlish = async (req, res) => {
+let publish = async (req, res) => {
   let { user_id, title, url, path, isopen, posting } = req.query;
   let sql =
     'insert into post (user_id,title,url,path,isopen,posting,create_time) values (?,?,?,?,?,?,?)';
@@ -544,13 +505,12 @@ let publlish = async (req, res) => {
 module.exports = {
   sendCode,
   codePhoneLogin,
-  // sendCoreCode,
   login,
   editUserInfo,
   setPassword,
   bindEmail,
   logout,
-  editUserImg,
+  uploadImg,
   uploadMoreImg,
-  publlish,
+  publish,
 };

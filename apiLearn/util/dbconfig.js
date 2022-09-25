@@ -6,18 +6,26 @@ module.exports = {
     host: 'localhost',
     user: 'root',
     password: '1234',
+    database: 'exapp',
   },
   //连接数据库，使用连接池方式
   //连接池对象
   sqlConnect: function (sql, sqlArr, callBack) {
-    var connection = mysql.createConnection(this.config);
-    connection.connect(function (err) {
+    var pool = mysql.createPool(this.config);
+
+    pool.getConnection(function (err, conn) {
       if (err) {
         console.error('error connecting: ' + err.stack);
         return;
       }
-      connection.query(sql, sqlArr, callBack);
-      connection.end();
+
+      conn.query(sql, sqlArr, function (error, results, fields) {
+        if (error) throw error;
+
+        callBack(results);
+
+        conn.release();
+      });
     });
   },
 
@@ -25,8 +33,8 @@ module.exports = {
   SySqlConnect: function (sySql, sqlArr) {
     return new Promise((resolve, reject) => {
       var pool = mysql.createPool(this.config);
+
       pool.getConnection(function (err, conn) {
-        console.log('123');
         if (err) {
           reject(err);
         } else {
@@ -36,6 +44,7 @@ module.exports = {
             } else {
               resolve(data);
             }
+            
             conn.release();
           });
         }
