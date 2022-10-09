@@ -1,56 +1,70 @@
 const mysql = require('mysql');
 
 module.exports = {
-  //数据库配置
   config: {
     host: 'localhost',
+    port: 3306,
     user: 'root',
     password: '1234',
     database: 'exapp',
   },
-  //连接数据库，使用连接池方式
-  //连接池对象
-  sqlConnect: function (sql, sqlArr, callBack) {
-    var pool = mysql.createPool(this.config);
+  sqlConnect: (sql, sqlArr, callback) => {
+    const pool = mysql.createPool(this.config);
 
-    pool.getConnection(function (err, conn) {
+    pool.getConnection((err, connection) => {
       if (err) {
-        console.error('error connecting: ' + err.stack);
-        return;
+        console.error('err connection: ', err.message);
+        throw err;
       }
 
-      conn.query(sql, sqlArr, function (error, results, fields) {
-        if (error) throw error;
+      connection.query(sql, sqlArr, (error, results, fields) => {
+        if (error) {
+          console.log('error query: ', error.message);
+          throw error;
+        }
 
-        callBack(results);
+        callback(results);
 
-        conn.release();
+        // 当不再使用时，归还到连接池中
+        connection.release();
+
+        // 当不再使用时并要从连接池中移除
+        connection.destroy();
       });
     });
+
+    // 当连接池不需要使用时，关闭连接池
+    pool.end();
   },
 
-  //promise 回调
-  SySqlConnect: function (sySql, sqlArr) {
+  SySqlConnect: (sySql, sqlArr) => {
     return new Promise((resolve, reject) => {
-      var pool = mysql.createPool(this.config);
+      const pool = mysql.createPool(this.config);
 
-      pool.getConnection(function (err, conn) {
+      pool.getConnection((err, connection) => {
         if (err) {
+          console.error('err connection: ', err.message);
           reject(err);
         } else {
-          conn.query(sySql, sqlArr, (err, data) => {
-            if (err) {
+          connection.query(sySql, sqlArr, (error, data) => {
+            if (error) {
+              console.log('error query: ', error.message);
               reject(err);
             } else {
               resolve(data);
             }
-            
-            conn.release();
+
+            // 当不再使用时，归还到连接池中
+            connection.release();
+
+            // 当不再使用时并要从连接池中移除
+            connection.destroy();
           });
         }
       });
-    }).catch((err) => {
-      console.log(err);
+
+      // 当连接池不需要使用时，关闭连接池
+      pool.end();
     });
   },
 };
