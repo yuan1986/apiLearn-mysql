@@ -20,12 +20,26 @@ var storage = multer.diskStorage({
 var upload = multer({
   storage,
   dest: './public/uploads/',
+  fileFilter(req, file, callback) {
+    // 解决中文名乱码的问题
+    file.originalname = Buffer.from(file.originalname, 'latin1').toString(
+      'utf8'
+    );
+    callback(null, true);
+  },
 }).single('file');
 
-var moreUpload = multer({ storage, dest: './public/uploads/' }).array(
-  'files',
-  100
-);
+var moreUpload = multer({
+  storage,
+  dest: './public/uploads/',
+  fileFilter(req, file, callback) {
+    // 解决中文名乱码的问题
+    file.originalname = Buffer.from(file.originalname, 'latin1').toString(
+      'utf8'
+    );
+    callback(null, true);
+  },
+}).array('files', 100);
 
 router.post('/sendCode', User.sendCode);
 router.post('/codePhoneLogin', User.codePhoneLogin);
