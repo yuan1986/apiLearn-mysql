@@ -1,6 +1,7 @@
 var dbConfig = require('../util/dbconfig');
 let fs = require('fs');
 let path = require('path');
+let xlsx = require('node-xlsx');
 
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -509,6 +510,46 @@ let download = (req, res) => {
   res.download(filePath);
 };
 
+let getExcel = (req, res) => {
+  const list = [
+    {
+      name: 'sheet1',
+      data: [
+        ['data1', 'data2', 'data3'],
+        ['data1', 'data2', 'data3'],
+        ['data1', 'data2', 'data3'],
+      ],
+    },
+    {
+      name: 'sheet2',
+      data: [
+        ['data1', 'data2', 'data3'],
+        ['data1', 'data2', 'data3'],
+        ['data1', 'data2', 'data3'],
+      ],
+    },
+    {
+      name: 'sheet3',
+      data: [
+        ['data1', 'data2', 'data3'],
+        ['data1', 'data2', 'data3'],
+        ['data1', 'data2', 'data3'],
+      ],
+    },
+  ];
+
+  // 得到一个表格文件流
+  const buffer = xlsx.build(list);
+
+  res.set({
+    'Content-Type': 'application/octet-stream', // 告诉浏览器这是一个二进制文件
+    'Content-Disposition': 'attachment; filename=Asnull.xlsx', // 告诉浏览器这是一个需要下载的文件并且文件名为Asnull.xlsx
+  });
+
+  // 响应客户端请求进行下载
+  res.send(buffer);
+};
+
 module.exports = {
   sendCode,
   codePhoneLogin,
@@ -521,4 +562,5 @@ module.exports = {
   uploadMoreImg,
   publish,
   download,
+  getExcel,
 };
