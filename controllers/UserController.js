@@ -513,37 +513,34 @@ let download = (req, res) => {
 let getExcel = (req, res) => {
   const list = [
     {
-      name: '页签_1',
+      name: 'test',
       data: [
-        ['姓名', '年龄', '地址'],
-        ['data1', 'data2', 'data3'],
-        ['data1', 'data2', 'data3'],
+        ['key', 'zh-CN', 'en-US', 'zh-TW', 'zh-GZ'],
+        [
+          'noMoney',
+          '我没钱啦！',
+          'I have no money',
+          '我沒錢啦！',
+          '我冇钱啦！',
+        ],
       ],
-    },
-    {
-      name: '页签_2',
-      data: [
-        ['姓名', '年龄', '地址'],
-        ['data1', 'data2', 'data3'],
-        ['data1', 'data2', 'data3'],
-      ],
-    },
-    {
-      name: '页签_3',
-      data: [
-        ['姓名', '年龄', '地址'],
-        ['data1', 'data2', 'data3'],
-        ['data1', 'data2', 'data3'],
-      ],
+      options: {
+        '!cols': [
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 30 },
+        ],
+      },
     },
   ];
 
-  // 得到一个表格文件流
   const buffer = xlsx.build(list);
 
   res.set({
     'Content-Type': 'application/octet-stream', // 告诉浏览器这是一个二进制文件
-    'Content-Disposition': 'attachment; filename=Asnull.xlsx', // 告诉浏览器这是一个需要下载的文件并且文件名为Asnull.xlsx
+    'Content-Disposition': `attachment; filename=test.xlsx`, // 告诉浏览器这是一个需要下载的文件并且文件名为Asnull.xlsx
   });
 
   // 响应客户端请求进行下载
