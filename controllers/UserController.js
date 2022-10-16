@@ -513,25 +513,25 @@ let download = (req, res) => {
 let getExcel = (req, res) => {
   const list = [
     {
-      name: 'sheet1',
+      name: '页签_1',
       data: [
-        ['data1', 'data2', 'data3'],
+        ['姓名', '年龄', '地址'],
         ['data1', 'data2', 'data3'],
         ['data1', 'data2', 'data3'],
       ],
     },
     {
-      name: 'sheet2',
+      name: '页签_2',
       data: [
-        ['data1', 'data2', 'data3'],
+        ['姓名', '年龄', '地址'],
         ['data1', 'data2', 'data3'],
         ['data1', 'data2', 'data3'],
       ],
     },
     {
-      name: 'sheet3',
+      name: '页签_3',
       data: [
-        ['data1', 'data2', 'data3'],
+        ['姓名', '年龄', '地址'],
         ['data1', 'data2', 'data3'],
         ['data1', 'data2', 'data3'],
       ],
