@@ -540,7 +540,7 @@ let getExcel = (req, res) => {
 
   res.set({
     'Content-Type': 'application/octet-stream', // 告诉浏览器这是一个二进制文件
-    'Content-Disposition': `attachment; filename=test.xlsx`, // 告诉浏览器这是一个需要下载的文件并且文件名为Asnull.xlsx
+    'Content-Disposition': `attachment; filename=${new Date().getTime()}.xlsx`, // 告诉浏览器这是一个需要下载的文件并且文件名为Asnull.xlsx
   });
 
   // 响应客户端请求进行下载
