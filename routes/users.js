@@ -52,6 +52,6 @@ router.post('/uploadImg', upload, User.uploadImg);
 router.post('/uploadMoreImg', moreUpload, User.uploadMoreImg);
 router.post('/publish', User.publish);
 router.get('/download', User.download);
-router.get('/excels', User.getExcel)
+router.post('/toXlsx', User.exportToXlsx);
 
 module.exports = router;

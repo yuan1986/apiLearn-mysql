@@ -2,6 +2,7 @@ var dbConfig = require('../util/dbconfig');
 let fs = require('fs');
 let path = require('path');
 let xlsx = require('node-xlsx');
+let nodeExcel = require('excel-export');
 
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -510,10 +511,32 @@ let download = (req, res) => {
   res.download(filePath);
 };
 
-let getExcel = (req, res) => {
+let exportToXlsx = (req, res) => {
   const list = [
     {
-      name: 'test',
+      name: 'test1',
+      data: [
+        ['key', 'zh-CN', 'en-US', 'zh-TW', 'zh-GZ'],
+        [
+          'noMoney',
+          '我没钱啦！',
+          'I have no money',
+          '我沒錢啦！',
+          '我冇钱啦！',
+        ],
+      ],
+      options: {
+        '!cols': [
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 30 },
+          { wch: 30 },
+        ],
+      },
+    },
+    {
+      name: 'test2',
       data: [
         ['key', 'zh-CN', 'en-US', 'zh-TW', 'zh-GZ'],
         [
@@ -559,5 +582,5 @@ module.exports = {
   uploadMoreImg,
   publish,
   download,
-  getExcel,
+  exportToXlsx,
 };
